@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BAB9F0712E165DF50081D5C2 /* MemberwiseInit in Frameworks */ = {isa = PBXBuildFile; productRef = BA08514D2E1654F400E7108A /* MemberwiseInit */; };
+		BAB9F0722E165DF50081D5C2 /* MemberwiseInitClient in Frameworks */ = {isa = PBXBuildFile; productRef = BA08514F2E1654F400E7108A /* MemberwiseInitClient */; };
+		BAB9F0732E165DF50081D5C2 /* MemberwiseInit in Frameworks */ = {isa = PBXBuildFile; productRef = BA0851492E1654E500E7108A /* MemberwiseInit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		BA9985192E1257DC00009FDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAB9F0722E165DF50081D5C2 /* MemberwiseInitClient in Frameworks */,
+				BAB9F0712E165DF50081D5C2 /* MemberwiseInit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAB9F0732E165DF50081D5C2 /* MemberwiseInit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +81,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BA0851432E16513000E7108A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BA9985022E1257D800009FDD = {
 			isa = PBXGroup;
 			children = (
 				BA99850D2E1257D800009FDD /* CoCo */,
 				BA99851B2E1257DC00009FDD /* CoCoTests */,
 				BA9985252E1257DC00009FDD /* CoCoUITests */,
+				BA0851432E16513000E7108A /* Frameworks */,
 				BA99850C2E1257D800009FDD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +129,8 @@
 			);
 			name = CoCo;
 			packageProductDependencies = (
+				BA08514D2E1654F400E7108A /* MemberwiseInit */,
+				BA08514F2E1654F400E7108A /* MemberwiseInitClient */,
 			);
 			productName = CoCo;
 			productReference = BA99850B2E1257D800009FDD /* CoCo.app */;
@@ -135,6 +154,7 @@
 			);
 			name = CoCoTests;
 			packageProductDependencies = (
+				BA0851492E1654E500E7108A /* MemberwiseInit */,
 			);
 			productName = CoCoTests;
 			productReference = BA9985182E1257DC00009FDD /* CoCoTests.xctest */;
@@ -195,6 +215,9 @@
 			);
 			mainGroup = BA9985022E1257D800009FDD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA99850C2E1257D800009FDD /* Products */;
 			projectDirPath = "";
@@ -412,9 +435,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -440,9 +467,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -458,9 +489,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCoTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoCo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CoCo";
 			};
 			name = Debug;
@@ -477,9 +512,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCoTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CoCo.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CoCo";
 			};
 			name = Release;
@@ -494,9 +533,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCoUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = CoCo;
 			};
 			name = Debug;
@@ -511,9 +554,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.o-henry.CoCoUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = CoCo;
 			};
 			name = Release;
@@ -558,6 +605,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gohanlon/swift-memberwise-init-macro";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BA0851492E1654E500E7108A /* MemberwiseInit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */;
+			productName = MemberwiseInit;
+		};
+		BA08514D2E1654F400E7108A /* MemberwiseInit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */;
+			productName = MemberwiseInit;
+		};
+		BA08514F2E1654F400E7108A /* MemberwiseInitClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */;
+			productName = MemberwiseInitClient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BA9985032E1257D800009FDD /* Project object */;
 }
