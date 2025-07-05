@@ -35,9 +35,26 @@
 		BA9985222E1257DC00009FDD /* CoCoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoCoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BA0011A22E18E873005F4F9B /* Exceptions for "CoCo" folder in "CoCoTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Feature/Feed/Application/Port/Feed+Repository.swift",
+				"Feature/Feed/Application/Port/FetchNearbyFeeds+UseCase.swift",
+				"Feature/Feed/Application/Port/UserLocation+Provider.swift",
+				"Feature/Feed/Application/Service/FetchNearbyFeeds+Service.swift",
+				Feature/Feed/Domain/Feed.swift,
+			);
+			target = BA9985172E1257DC00009FDD /* CoCoTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BA99850D2E1257D800009FDD /* CoCo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BA0011A22E18E873005F4F9B /* Exceptions for "CoCo" folder in "CoCoTests" target */,
+			);
 			path = CoCo;
 			sourceTree = "<group>";
 		};
@@ -217,6 +234,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */,
+				BAF694522E19557500A0E588 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				BAF694532E195B0700A0E588 /* XCRemoteSwiftPackageReference "geofire-objc" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA99850C2E1257D800009FDD /* Products */;
@@ -613,6 +632,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.5.2;
+			};
+		};
+		BAF694522E19557500A0E588 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.15.0;
+			};
+		};
+		BAF694532E195B0700A0E588 /* XCRemoteSwiftPackageReference "geofire-objc" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/geofire-objc.git";
+			requirement = {
+				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

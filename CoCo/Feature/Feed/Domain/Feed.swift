@@ -12,7 +12,7 @@ import Foundation
 import MemberwiseInit
 
 @MemberwiseInit(.public)
-struct Feed: Equatable, Identifiable {
+struct Feed: Equatable, Identifiable, Hashable {
     let id: UUID = .init()
     @Init(.public) let content: String
     @Init(.public) let location: CLLocation

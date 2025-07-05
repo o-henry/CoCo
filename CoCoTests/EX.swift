@@ -153,12 +153,12 @@ struct SendMessageViewModelTests {
                 (description: "개행/탭 문자열", input: "\n\t")
             ]
         )
-        func testInvalidInputDisablesSendButton(argument: (description: String, input: String)) {
+        func testInvalidInputDisablesSendButton(argument: (description: String, input: String)) throws {
             // GIVEN
             let (sut, _) = SendMessageViewModelTests().makeSUT()
             // 먼저 버튼을 활성화시켜 상태 변화를 명확히 확인
             sut.updateMessageContent("유효한 메시지")
-            #require(sut.isSendButtonDisabled == false, "테스트 전제조건: 버튼이 활성화되어 있어야 함")
+            try #require(sut.isSendButtonDisabled == false, "테스트 전제조건: 버튼이 활성화되어 있어야 함")
 
             // WHEN
             sut.updateMessageContent(argument.input)
