@@ -1,5 +1,5 @@
 //
-//  UserLocation+Provider.swift
+//  UserLocationProvider.swift
 //  CoCoTests
 //
 //  Created by Henry on 7/5/25.

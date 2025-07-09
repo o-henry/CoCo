@@ -39,9 +39,6 @@
 		BA0011A22E18E873005F4F9B /* Exceptions for "CoCo" folder in "CoCoTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Feature/Feed/Application/Port/Feed+Repository.swift",
-				"Feature/Feed/Application/Port/FetchNearbyFeeds+UseCase.swift",
-				"Feature/Feed/Application/Port/UserLocation+Provider.swift",
 				"Feature/Feed/Application/Service/FetchNearbyFeeds+Service.swift",
 				Feature/Feed/Domain/Feed.swift,
 			);

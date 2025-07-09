@@ -7,119 +7,36 @@
 
 import CoreLocation
 import Foundation
-import GeoFire
-import GeoFireUtils
 
 // 구현체
 class FirebaseFeedFetchAdapter: FeedRepository {
-    private let db: Firestore
+    // private let db: Firestore // 실제 프로젝트에서는 Firestore 인스턴스를 주입받습니다.
     private let feedsCollection: String
 
-    init(firestore: Firestore = Firestore.firestore(), collectionName: String = "feeds") {
-        self.db = firestore
+    init(collectionName: String = "feeds") {
         self.feedsCollection = collectionName
     }
 
-    /// GeoQuery 부분은 Firebase 의존적인 기능
+    /// 이 메서드는 외부 시스템(Firebase)과 통신하는 Adapter의 역할을 보여줍니다.
+    /// 실제 구현에서는 Firestore와 GeoFire/GeoQueries를 사용하여 특정 위치 주변의 피드를 쿼리합니다.
+    ///
+    /// - Parameters:
+    ///   - location: 피드를 검색할 중심 위치입니다.
+    ///   - radius: 검색할 반경(미터 단위)입니다.
+    /// - Returns: 검색된 피드 배열을 반환합니다. 실패 시 에러를 던집니다.
     func fetchFeeds(near location: CLLocation, within radius: Double = 2000.0) async throws -> [Feed] {
-        /// Firebase DB에서 요청을 한다.
-        /// 요청 시 GeoFire를 활용해서 특정 거리 이내의 피드만을 가져온다.
-        /// 그러니까 구현 상세에 해당하는 요소를 아키텍처상 가장 외부로 밀고, 내부는 순수하게 유지하기
-        return []
-    }
+        // 실제로는 이 부분에서 Firebase에 비동기 쿼리를 보냅니다.
+        // 예: let query = db.collection(feedsCollection).near(location, radius: radius)
+        //     let documents = try await query.getDocuments()
+        //     return documents.compactMap { try? $0.data(as: Feed.self) }
 
-//    private let db: Firestore
-//     private let feedsCollection: String
-//
-//     init(firestore: Firestore = Firestore.firestore(), collectionName: String = "feeds") {
-//         self.db = firestore
-//         self.feedsCollection = collectionName
-//     }
-//
-//     func fetchFeeds(within bounds: [GFGeoQueryBounds]) async throws -> [Feed] {
-//         var candidateFeeds: [Feed] = []
-//
-//         let fiveDaysAgoDate = Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date()
-//         let fiveDaysAgoTimestamp = Timestamp(date: fiveDaysAgoDate)
-//
-//         // Firestore 쿼리를 병렬로 실행하기 위해 TaskGroup 사용
-//         try await withThrowingTaskGroup(of: [Feed].self) { group in
-//             for bound in bounds {
-//                 group.addTask { [weak self] in
-//                     guard let self = self else { return [] } // 약한 참조 해제
-//
-//                     // Firestore 쿼리 생성 (geohash 기준)
-//                     // 중요: Firestore 문서의 geohash 필드명이 'geohash'라고 가정
-//                     let query = self.db.collection(self.feedsCollection)
-//                         .order(by: "geohash") // Feed 구조체의 geohash 필드명 사용
-//                         .whereField("geohash", isGreaterThanOrEqualTo: bound.startValue)
-//                         .whereField("geohash", isLessThanOrEqualTo: bound.endValue)
-//                         .whereField("date", isGreaterThanOrEqualTo: fiveDaysAgoTimestamp)
-//
-//                     do {
-//                         let querySnapshot = try await query.getDocuments()
-//
-//                         // Firestore 문서를 Feed 객체로 디코딩
-//                         // 디코딩 실패 시 해당 문서는 제외 (compactMap)
-//                         let feedsInBound = querySnapshot.documents.compactMap { document -> Feed? in
-//                             do {
-//                                 var feed = try document.data(as: Feed.self)
-//                                 // Firestore @DocumentID가 자동으로 채워지지 않는 경우 수동 설정
-//                                 feed.id = document.documentID
-//                                 return feed
-//                             } catch let decodingError as DecodingError {
-//                                 // 디코딩 오류 로깅 (어떤 문서에서 어떤 오류가 났는지 파악)
-//                                 // 실패한 문서는 nil 반환하여 compactMap에서 걸러냄
-//                                 return nil
-//                             } catch {
-//                                 return nil
-//                             }
-//                         }
-//                         return feedsInBound
-//                     } catch {
-//                         // Firestore 쿼리 자체의 오류
-//                         // TaskGroup 내에서 오류 발생 시 TaskGroup 전체가 취소될 수 있음
-//                         throw error // 에러를 다시 던져서 TaskGroup이 처리하도록 함
-//                     }
-//                 }
-//             }
-//
-//             // 각 Task의 결과(Feed 배열)를 수집
-//             for try await feedsResult in group {
-//                 candidateFeeds.append(contentsOf: feedsResult)
-//             }
-//         } // TaskGroup 종료
-//
-//         // TaskGroup 내에서 오류 없이 완료된 경우, 수집된 후보 피드 반환
-//         // 참고: Firestore 쿼리는 동일 문서를 여러 bound에서 중복으로 가져올 수 있음
-//         // 중복 제거는 필요 시 호출하는 쪽(Service)에서 수행하거나 여기서 수행 가능
-//         // 여기서는 중복 포함된 상태로 반환 (거리 필터링 후 중복 제거가 효율적일 수 있음)
-//         return candidateFeeds
-//     }
-//
-//     func fetchFeeds(byAuthorId authorId: String) async throws -> [Feed] {
-//         var fetchedFeeds: [Feed] = []
-//
-//         let query = db.collection(feedsCollection)
-//             .whereField("authorId", isEqualTo: authorId) // 🟢 authorId 필드로 쿼리
-//             .order(by: "date", descending: true) // 최신순 정렬
-//
-//         do {
-//             let querySnapshot = try await query.getDocuments()
-//
-//             fetchedFeeds = querySnapshot.documents.compactMap { document -> Feed? in
-//                 do {
-//                     var feed = try document.data(as: Feed.self)
-//                     feed.id = document.documentID
-//                     return feed
-//                 } catch let decodingError {
-//                     return nil
-//                 }
-//             }
-//         } catch {
-//             throw error
-//         }
-//         return fetchedFeeds
-//     }
-    // }
+        print("FirebaseAdapter: Fetching feeds near (\(location.coordinate.latitude), \(location.coordinate.longitude)) within \(radius)m.")
+
+        // 포트폴리오용 샘플이므로, 더미 데이터를 반환합니다.
+        // 실제 앱의 복잡한 로직 대신 아키텍처를 보여주는 데 집중합니다.
+        return [
+            Feed(content: "Firebase에서 가져온 첫 번째 피드", location: Coordinate(latitude: 37.5665, longitude: 126.9780)),
+            Feed(content: "Firebase에서 가져온 두 번째 피드", location: Coordinate(latitude: 37.5650, longitude: 126.9765))
+        ]
+    }
 }
