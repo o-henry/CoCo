@@ -17,3 +17,9 @@ protocol UserLocationProvider {
     // 사용자 현재 위치
     func getCurrentLocation() async throws -> CLLocation
 }
+
+enum LocationError: Error {
+    case authorizationDenied
+    case locationUnavailable
+    case unknown
+}
