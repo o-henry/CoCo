@@ -21,26 +21,15 @@ struct HomeScreen: View {
     @State private var viewModel: HomeScreenViewModel
 
     init(viewModel: HomeScreenViewModel) {
-        self._viewModel = State(initialValue: viewModel)
+        _viewModel = State(wrappedValue: viewModel)
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // 지도 뷰 - 부모 ViewModel 참조
-            MapView(
-                feeds: viewModel.feeds,
-                selectedFeed: viewModel.selectedFeed,
-                region: viewModel.mapRegion,
-                onFeedSelected: viewModel.selectFeedFromMap
-            )
-
-            // 바텀시트 - 부모 ViewModel 참조
-            FeedListBottomSheet(
-                feeds: viewModel.feeds,
-                selectedFeed: viewModel.selectedFeed,
-                onFeedSelected: viewModel.selectFeed
-            )
+            MapView()
+            FeedListBottomSheet()
         }
+        .environmentObject(viewModel)
         .task {
             await viewModel.loadNearbyFeeds()
         }
@@ -48,21 +37,18 @@ struct HomeScreen: View {
 }
 
 struct MapView: View {
-    let feeds: [Feed]
-    let selectedFeed: Feed?
-    let region: MKCoordinateRegion
-    let onFeedSelected: (Feed) -> Void
+    @EnvironmentObject var viewModel: HomeScreenViewModel
 
     var body: some View {
-        Map(coordinateRegion: .constant(region)) {
-            ForEach(feeds) { feed in
+        Map(coordinateRegion: .constant(viewModel.mapRegion)) {
+            ForEach(viewModel.feeds) { feed in
                 MapAnnotation(coordinate: feed.location.asCLLocationCoordinate2D) {
                     FeedMarker(
                         feed: feed,
-                        isSelected: feed.id == selectedFeed?.id
+                        isSelected: feed.id == viewModel.selectedFeed?.id
                     )
                     .onTapGesture {
-                        onFeedSelected(feed)
+                        viewModel.selectFeedFromMap(feed)
                     }
                 }
             }
@@ -71,20 +57,18 @@ struct MapView: View {
 }
 
 struct FeedListBottomSheet: View {
-    let feeds: [Feed]
-    let selectedFeed: Feed?
-    let onFeedSelected: (Feed) -> Void
+    @EnvironmentObject var viewModel: HomeScreenViewModel
 
     var body: some View {
         ScrollView {
             LazyVStack {
-                ForEach(feeds) { feed in
+                ForEach(viewModel.feeds) { feed in
                     FeedRow(
                         feed: feed,
-                        isSelected: feed.id == selectedFeed?.id
+                        isSelected: feed.id == viewModel.selectedFeed?.id
                     )
                     .onTapGesture {
-                        onFeedSelected(feed)
+                        viewModel.selectFeed(feed)
                     }
                 }
             }
@@ -93,6 +77,3 @@ struct FeedListBottomSheet: View {
         .cornerRadius(16)
     }
 }
-
-
-
