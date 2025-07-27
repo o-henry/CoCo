@@ -1,3 +1,4 @@
+
 //
 //  CoCoTests.swift
 //  CoCoTests
@@ -7,73 +8,71 @@
 
 @testable import CoCo
 import CoreLocation
+import Factory
 import Testing
 
-/// 비즈니스 로직을 테스트 합니다.
-@Suite("FetchNearbyFeeds - 주변 피드 검색 테스트")
-struct FetchNearbyFeedsTests {
-    // MARK: - Factory
+@Suite("주변 피드 검색 기능 테스트")
+struct FetchNearbyFeedsUsingFactoryTests {
+    @Test("주어진 반경 내의 피드만 올바르게 반환하는지 테스트")
+    func execute_whenFeedsExist_shouldReturnOnlyFeedsWithinRadius() async throws {
+        // MARK: GIVEN (준비)
 
-    private func makeSUT() -> (
-        sut: FetchNearbyFeedsService,
-        locationProvider: MockUserLocationProvider,
-        feedRepository: MockFeedRepository
-    ) {
-        let mockLocationProvider = MockUserLocationProvider()
+        // 1. 테스트 격리를 위해 Factory 컨테이너 초기화
+        Container.shared.reset()
+
+        // 2. Mock 객체 생성 및 Factory 컨테이너에 등록
+        let mockLocationProvider = MockLocationProvider()
         let mockFeedRepository = MockFeedRepository()
-        let sut = FetchNearbyFeedsService(
-            locationProvider: mockLocationProvider,
-            feedRepository: mockFeedRepository
-        )
-        return (sut, mockLocationProvider, mockFeedRepository)
+        Container.shared.locationProvider.register { mockLocationProvider }
+        Container.shared.feedRepository.register { mockFeedRepository }
+
+        // 3. 테스트 데이터 설정
+        let myLocation = CLLocation(latitude: 37.5665, longitude: 126.9780) // 서울 시청
+        let searchRadius: Double = 2000
+
+        mockLocationProvider.mockLocation = myLocation
+
+        let feedInside = Feed(authorId: "user1", content: "시청 근처", location: .init(latitude: 37.5650, longitude: 126.9765)) // 2km 이내
+        let feedAlsoInside = Feed(authorId: "user2", content: "덕수궁 돌담길", location: .init(latitude: 37.5658, longitude: 126.9751)) // 2km 이내
+        let feedOutside = Feed(authorId: "user3", content: "남산타워", location: .init(latitude: 37.5512, longitude: 126.9882)) // 약 2km 바깥
+
+        mockFeedRepository.allCandidateFeeds = [feedInside, feedAlsoInside, feedOutside]
+
+        // 4. 테스트 대상(SUT) 생성
+        let sut: FetchNearbyFeedsUseCase = Container.shared.fetchNearbyFeedsUseCase()
+
+        // MARK: WHEN (실행)
+
+        let resultFeeds = try await sut.execute(radiusInMeters: searchRadius)
+
+        // MARK: THEN (검증)
+
+        #expect(resultFeeds.count == 2, "반경 내의 피드 2개만 반환되어야 합니다.")
+
+        let resultFeedIDs = resultFeeds.map { $0.id }
+        #expect(resultFeedIDs.contains(feedInside.id), "반경 내의 첫 번째 피드가 포함되어야 합니다.")
+        #expect(resultFeedIDs.contains(feedAlsoInside.id), "반경 내의 두 번째 피드가 포함되어야 합니다.")
+        #expect(!resultFeedIDs.contains(feedOutside.id), "반경 밖의 피드는 포함되지 않아야 합니다.")
     }
 
-    // MARK: - Improved Test
+    @Test("위치 정보 가져오기 실패 시, 올바른 에러를 던지는지 테스트")
+    func execute_whenLocationFails_shouldThrowLocationError() async {
+        // MARK: GIVEN
 
-    @Test("주어진 반경 내의 피드만 필터링하여 반환해야 합니다")
-    func fetchNearbyFeeds_whenMultipleFeedsExist_shouldReturnOnlyFeedsWithinRadius() async throws {
-        // GIVEN: 테스트 준비
-        let (sut, _, mockFeedRepository) = makeSUT()
+        Container.shared.reset()
 
-        // 1. 기준 위치와 검색 반경 설정 (예: 강남역 반경 1km)
-        let centerLocation = CLLocation(latitude: 37.4979, longitude: 127.0276) // 강남역
-        let searchRadius: CLLocationDistance = 1000 // 1km
+        let mockLocationProvider = MockLocationProvider()
+        mockLocationProvider.mockError = LocationError.authorizationDenied
 
-        // 2. Mock 데이터 설정: 반경 내/외 피드들을 모두 포함
-        let feedInsideRadius = Feed(content: "강남역 근처", location: CLLocation(latitude: 37.4999, longitude: 127.0286)) // 약 230m 거리
-        let feedOnEdgeOfRadius = Feed(content: "반경 경계", location: CLLocation(latitude: 37.5069, longitude: 127.0279)) // 약 1km 거리
-        let feedOutsideRadius = Feed(content: "역삼역 너머", location: CLLocation(latitude: 37.5008, longitude: 127.0368)) // 약 1.6km 거리
+        Container.shared.locationProvider.register { mockLocationProvider }
+        Container.shared.feedRepository.register { MockFeedRepository() }
 
-        let allCandidateFeeds = [feedInsideRadius, feedOnEdgeOfRadius, feedOutsideRadius]
-        mockFeedRepository.mockFeeds = allCandidateFeeds
+        let sut: FetchNearbyFeedsUseCase = Container.shared.fetchNearbyFeedsUseCase()
 
-        // 3. 예상 결과 정의: 반경 내의 피드만 포함
-        let expectedFeeds = [feedInsideRadius, feedOnEdgeOfRadius]
+        // MARK: WHEN & THEN
 
-        // WHEN: 테스트 대상 실행
-        let resultFeeds = try await sut.execute(around: centerLocation)
-
-        // THEN: 결과 검증
-        #expect(resultFeeds.count == 2, "결과 피드는 2개여야 합니다.")
-
-        // 결과 목록에 예상된 피드들이 모두 포함되어 있는지 확인
-        // (Feed가 Hashable을 준수해야 Set으로 변환 가능)
-        #expect(Set(resultFeeds) == Set(expectedFeeds), "반경 내의 피드만 포함해야 합니다.")
-    }
-
-    /// 발생 가능한 에러
-    /// - 네트워크 에러
-    /// - 위치정보 없음
-    @Test("위치 제공자에서 에러가 발생하면, 해당 에러를 전파합니다")
-    func fetchNearbyFeeds_whenLocationProviderFails_shouldThrowError() async {
-        // ARRANGE
-        let (sut, mockLocationProvider, _) = makeSUT()
-        enum LocationError: Error { case failedToFetch }
-        mockLocationProvider.mockError = LocationError.failedToFetch
-
-        // ACT & ASSERT
-        await #expect(throws: (any Error).self) {
-            _ = try await sut.execute(around: nil)
+        await #expect(throws: FetchFeedsError.self, "FetchFeedsError 타입의 에러를 던져야 합니다.") {
+            _ = try await sut.execute(radiusInMeters: 2000)
         }
     }
 }

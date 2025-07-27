@@ -7,7 +7,6 @@
 
 import CoreLocation
 import Foundation
-import Core
 
 // 구현체
 class FirebaseFeedFetchAdapter: FeedRepository {
@@ -33,7 +32,7 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
         print("FirebaseAdapter: Fetching feeds near (\(location.coordinate.latitude), \(location.coordinate.longitude)) within \(radius)m.")
 
-        // 포트폴리오용 샘플이므로, 더미 데이터를 반환합니다.
+        // 샘플 이므로, 더미 데이터를 반환합니다.
         // 실제 앱의 복잡한 로직 대신 아키텍처를 보여주는 데 집중합니다.
         return [
             Feed(
@@ -49,15 +48,21 @@ class FirebaseFeedFetchAdapter: FeedRepository {
         ]
     }
 
-    func fetchFeeds(forUserId: String) async throws -> [Feed] {
-//        do {
-//            let snapshot = try await Firestore.instance.collection("feeds").whereField("authorId", isEqualTo: forUserId).getDocuments()
-//            return snapshot.documents.map { Feed(from: $0.data()) }
-//        } catch {
-//            // 인프라 에러 변환: 도메인 에러로 래핑
-//            throw DomainError.networkFailure(underlying: error)
-//        }
-
-        return []
+    func fetchFeeds(userId: String) async throws -> [Feed] {
+        /// 1. 오류 변환 (Adapter)
+        /// Firestore와 같은 외부 시스템의 구체적인 오류(예: `FirebaseError`)를
+        /// 애플리케이션이 이해할 수 있는 일반적인 오류(`FeedRepositoryError`)로 변환합니다.
+        do {
+            // 실제로는 이 부분에서 Firestore 쿼리를 실행합니다.
+            // let snapshot = try await Firestore.instance.collection("feeds")...
+            return [] // 성공 시 실제 데이터 반환
+        } catch let error as FeedRepositoryError {
+            throw error
+        } catch {
+            // Firestore 등 외부 라이브러리의 구체적인 오류를 비즈니스 오류로 변환합니다.
+            // 여기서는 네트워크 관련 문제로 가정하고 .network 오류로 매핑합니다.
+            print("FirebaseFeedFetchAdapter: Firestore 오류를 FeedRepositoryError.network로 변환합니다.")
+            throw FeedRepositoryError.network(underlying: error)
+        }
     }
 }

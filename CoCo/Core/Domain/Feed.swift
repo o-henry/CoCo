@@ -15,3 +15,10 @@ struct Feed: Equatable, Identifiable, Hashable {
     @Init(.public) public let content: String
     @Init(.public) public let location: Coordinate
 }
+
+// Value-Object
+@MemberwiseInit(.public)
+struct Coordinate: Hashable, Equatable {
+    @Init(.public) let latitude: Double
+    @Init(.public) let longitude: Double
+}

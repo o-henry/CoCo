@@ -5,6 +5,7 @@
 //  Created by Henry on 6/30/25.
 //
 
+import Factory
 import SwiftUI
 
 @main

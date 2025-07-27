@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA63F4852E3366D40060CA99 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = BA63F4842E3366D40060CA99 /* Factory */; };
+		BA63F4872E3366D40060CA99 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = BA63F4862E3366D40060CA99 /* FactoryKit */; };
+		BA63F4892E3366D40060CA99 /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = BA63F4882E3366D40060CA99 /* FactoryTesting */; };
 		BAB9F0712E165DF50081D5C2 /* MemberwiseInit in Frameworks */ = {isa = PBXBuildFile; productRef = BA08514D2E1654F400E7108A /* MemberwiseInit */; };
 		BAB9F0722E165DF50081D5C2 /* MemberwiseInitClient in Frameworks */ = {isa = PBXBuildFile; productRef = BA08514F2E1654F400E7108A /* MemberwiseInitClient */; };
 		BAB9F0732E165DF50081D5C2 /* MemberwiseInit in Frameworks */ = {isa = PBXBuildFile; productRef = BA0851492E1654E500E7108A /* MemberwiseInit */; };
@@ -35,23 +38,9 @@
 		BA9985222E1257DC00009FDD /* CoCoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoCoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BA0011A22E18E873005F4F9B /* Exceptions for "CoCo" folder in "CoCoTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Feature/Feed/Application/Service/FetchNearbyFeeds+Service.swift",
-				Feature/Feed/Domain/Feed.swift,
-			);
-			target = BA9985172E1257DC00009FDD /* CoCoTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BA99850D2E1257D800009FDD /* CoCo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BA0011A22E18E873005F4F9B /* Exceptions for "CoCo" folder in "CoCoTests" target */,
-			);
 			path = CoCo;
 			sourceTree = "<group>";
 		};
@@ -63,6 +52,11 @@
 		BA9985252E1257DC00009FDD /* CoCoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CoCoUITests;
+			sourceTree = "<group>";
+		};
+		BADF80BD2E31D0D20054D890 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -81,7 +75,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA63F4892E3366D40060CA99 /* FactoryTesting in Frameworks */,
+				BA63F4872E3366D40060CA99 /* FactoryKit in Frameworks */,
 				BAB9F0732E165DF50081D5C2 /* MemberwiseInit in Frameworks */,
+				BA63F4852E3366D40060CA99 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +105,7 @@
 				BA99850D2E1257D800009FDD /* CoCo */,
 				BA99851B2E1257DC00009FDD /* CoCoTests */,
 				BA9985252E1257DC00009FDD /* CoCoUITests */,
+				BADF80BD2E31D0D20054D890 /* Resources */,
 				BA0851432E16513000E7108A /* Frameworks */,
 				BA99850C2E1257D800009FDD /* Products */,
 			);
@@ -140,6 +138,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				BA99850D2E1257D800009FDD /* CoCo */,
+				BADF80BD2E31D0D20054D890 /* Resources */,
 			);
 			name = CoCo;
 			packageProductDependencies = (
@@ -169,6 +168,9 @@
 			name = CoCoTests;
 			packageProductDependencies = (
 				BA0851492E1654E500E7108A /* MemberwiseInit */,
+				BA63F4842E3366D40060CA99 /* Factory */,
+				BA63F4862E3366D40060CA99 /* FactoryKit */,
+				BA63F4882E3366D40060CA99 /* FactoryTesting */,
 			);
 			productName = CoCoTests;
 			productReference = BA9985182E1257DC00009FDD /* CoCoTests.xctest */;
@@ -233,6 +235,7 @@
 				BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */,
 				BAF694522E19557500A0E588 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				BAF694532E195B0700A0E588 /* XCRemoteSwiftPackageReference "geofire-objc" */,
+				BA63F4782E3352D70060CA99 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA99850C2E1257D800009FDD /* Products */;
@@ -631,6 +634,14 @@
 				minimumVersion = 0.5.2;
 			};
 		};
+		BA63F4782E3352D70060CA99 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 		BAF694522E19557500A0E588 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -664,6 +675,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BA0851482E1654E500E7108A /* XCRemoteSwiftPackageReference "swift-memberwise-init-macro" */;
 			productName = MemberwiseInitClient;
+		};
+		BA63F4842E3366D40060CA99 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA63F4782E3352D70060CA99 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		BA63F4862E3366D40060CA99 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA63F4782E3352D70060CA99 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
+		BA63F4882E3366D40060CA99 /* FactoryTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BA63F4782E3352D70060CA99 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryTesting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

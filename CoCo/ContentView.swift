@@ -5,17 +5,12 @@
 //  Created by Henry on 6/30/25.
 //
 
+import Factory
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        HomeScreen(viewModel: Container.shared.homeScreenViewModel())
     }
 }
 

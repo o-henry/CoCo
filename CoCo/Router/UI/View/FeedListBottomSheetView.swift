@@ -6,13 +6,31 @@
 //
 
 import SwiftUI
+import Factory
 
 struct FeedListBottomSheetView: View {
+    @EnvironmentObject var viewModel: HomeScreenViewModel
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView {
+            LazyVStack {
+                ForEach(viewModel.feeds) { feed in
+                    FeedRow(
+                        feed: feed,
+                        isSelected: feed.id == viewModel.selectedFeed?.id
+                    )
+                    .onTapGesture {
+                        viewModel.selectFeed(feed)
+                    }
+                }
+            }
+        }
+        .background(Color.white)
+        .cornerRadius(16)
     }
 }
 
 #Preview {
     FeedListBottomSheetView()
+        .environmentObject(Container.shared.homeScreenViewModel())
 }
