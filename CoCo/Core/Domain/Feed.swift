@@ -10,7 +10,8 @@ import MemberwiseInit
 
 @MemberwiseInit(.public)
 struct Feed: Equatable, Identifiable, Hashable {
-    let id: UUID = .init()
-    @Init(.public) let content: String
-    @Init(.public) let location: Coordinate
+    public let id: UUID = .init()
+    @Init(.public) public let authorId: String
+    @Init(.public) public let content: String
+    @Init(.public) public let location: Coordinate
 }

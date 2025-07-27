@@ -36,6 +36,7 @@ struct HomeScreen: View {
     }
 }
 
+// TODO: - MapView, FeedListBottomSheet 분리
 struct MapView: View {
     @EnvironmentObject var viewModel: HomeScreenViewModel
 

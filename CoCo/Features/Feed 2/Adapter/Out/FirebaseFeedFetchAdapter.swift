@@ -1,5 +1,5 @@
 //
-//  FirebaseFeedFetch+Adapter.swift
+//  FirebaseFeedFetchAdapter.swift
 //  CoCo
 //
 //  Created by Henry on 7/5/25.
@@ -7,6 +7,7 @@
 
 import CoreLocation
 import Foundation
+import Core
 
 // 구현체
 class FirebaseFeedFetchAdapter: FeedRepository {
@@ -35,8 +36,28 @@ class FirebaseFeedFetchAdapter: FeedRepository {
         // 포트폴리오용 샘플이므로, 더미 데이터를 반환합니다.
         // 실제 앱의 복잡한 로직 대신 아키텍처를 보여주는 데 집중합니다.
         return [
-            Feed(content: "Firebase에서 가져온 첫 번째 피드", location: Coordinate(latitude: 37.5665, longitude: 126.9780)),
-            Feed(content: "Firebase에서 가져온 두 번째 피드", location: Coordinate(latitude: 37.5650, longitude: 126.9765))
+            Feed(
+                authorId: "01X2XFF",
+                content: "Firebase에서 가져온 첫 번째 피드",
+                location: Coordinate(latitude: 37.5665, longitude: 126.9780)
+            ),
+            Feed(
+                authorId: "FF2G87",
+                content: "Firebase에서 가져온 두 번째 피드",
+                location: Coordinate(latitude: 37.5650, longitude: 126.9765)
+            )
         ]
+    }
+
+    func fetchFeeds(forUserId: String) async throws -> [Feed] {
+//        do {
+//            let snapshot = try await Firestore.instance.collection("feeds").whereField("authorId", isEqualTo: forUserId).getDocuments()
+//            return snapshot.documents.map { Feed(from: $0.data()) }
+//        } catch {
+//            // 인프라 에러 변환: 도메인 에러로 래핑
+//            throw DomainError.networkFailure(underlying: error)
+//        }
+
+        return []
     }
 }

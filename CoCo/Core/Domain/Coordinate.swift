@@ -9,6 +9,7 @@
 import Foundation
 import MemberwiseInit
 
+// Value-Object
 @MemberwiseInit(.public)
 public struct Coordinate: Hashable, Equatable {
     @Init(.public) let latitude: Double

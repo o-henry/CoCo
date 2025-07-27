@@ -8,16 +8,17 @@
 import CoreLocation
 import Foundation
 
-protocol FetchNearbyFeedsUseCase {
+// API
+public protocol FetchNearbyFeedsUseCase {
     func execute() async throws -> [Feed]
 }
 
-enum FetchFeedsError: Error {
+public enum FetchFeedsError: Error {
     case locationError(underlying: Error?)
     case repositoryError(underlying: Error)
     case unknown(underlying: Error?)
 
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .locationError:
             return "위치 정보를 가져오는데 실패했습니다."

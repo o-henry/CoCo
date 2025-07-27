@@ -1,5 +1,5 @@
 //
-//  FetchNearbyFeeds+Service.swift
+//  FetchNearbyFeedsService.swift
 //  CoCoTests
 //
 //  Created by Henry on 7/5/25.
