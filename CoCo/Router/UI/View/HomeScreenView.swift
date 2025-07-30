@@ -12,7 +12,7 @@ import SwiftUI
 // MARK: - Domain to View Conversion
 
 struct HomeScreen: View {
-    @StateObject var viewModel: HomeScreenViewModel
+    @State var viewModel: HomeScreenViewModel
 
     var body: some View {
         ZStack(alignment: .bottom) {

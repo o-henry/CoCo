@@ -9,7 +9,7 @@ import Factory
 import SwiftUI
 
 struct MyFeedsView: View {
-    @StateObject var viewModel: MyFeedsViewModel
+    @State var viewModel: MyFeedsViewModel
 
     var body: some View {
         VStack {

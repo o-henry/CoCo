@@ -9,7 +9,7 @@ import Factory
 import Foundation
 
 class FetchMyFeedsService: FetchMyFeedsUseCase {
-    @Injected(Container.feedRepository) private var feedRepository: FeedRepository
+    @Injected(\.feedRepository) private var feedRepository: FeedRepository
 
     func execute(userId: String) async throws -> [Feed] {
         do {
