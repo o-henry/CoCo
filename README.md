@@ -1,8 +1,14 @@
-<div align="center">
- <h1>coco</h1>
-</div>
+<div>
+    <div align="center">
+        <h1>coco</h1>
+    </div>
+
 
 > 이 코드는 실제로 운영 중인 iOS 앱의 내부 설계, 아키텍처, 주요 유스케이스 및 테스트 전략을 설명하기 위해 일부 공개된 것입니다. 실제 앱의 전체 소스 코드나 세부 로직은 포함되어 있지 않으며, 일부 코드는 예시 및 구조적 이해를 돕기 위한 샘플일 뿐, 실제 구현과는 차이가 있을 수 있습니다.
+
+<br />
+
+<samp>
 
 ## 개요
 
@@ -265,7 +271,7 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 - **예시**: `CoreLocationAdapter`에서 위치 정보 사용 권한이 거부되면, `CLLocationManager`의 상태를 확인하여 `LocationError.authorizationDenied`라는 도메인 오류를 발생시킵니다.
 - **이유**: 이렇게 함으로써 애플리케이션의 핵심 로직이 CoreLocation, Firebase 같은 특정 기술에 종속되지 않게 됩니다. 나중에 위치 제공자나, 데이터베이스를 다른 것으로 교체하더라도 Service 계층의 코드는 변경할 필요가 없어집니다.
 
-1. Service / Use Case Layer (Application Layer)
+2. Service / Use Case Layer (Application Layer)
 	이 계층은 **비즈니스 관점의 오류를 처리하고 복구 전략을 결정**하는 가장 중요한 지점입니다.
 	- **역할**: Adapter로부터 전달받은 도메인 오류를 바탕으로 비즈니스 규칙에 따라 다음에 어떤 행동을 할지 **결정합니다.
 	- **대상**: `FetchNearbyFeedsService`, `FetchMyFeedsService` 등
@@ -276,7 +282,7 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 	    - 필요하다면 재시도 로직을 구현할 수도 있는 최적의 위치입니다.
 	- **이유**: 여러 Adapter와 상호작용하며 전체 비즈니스 흐름을 관장하는 곳은 Service 계층뿐입니다. 따라서 어떤 오류가 발생했을 때 전체 작업의 성공/실패를 판단하고 그에 따른 흐름을 제어할 책임이 있습니다.
 
-## 3. UI Layer (ViewModel)
+3. UI Layer (ViewModel)
 이 계층은 처리된 오류를 **사용자에게 어떻게 보여줄지 결정**하는 최종 단계입니다.
 - **역할**: Service/Use Case 계층에서 전달받은 최종 오류를 사용자 친화적인 방식으로 **표현**합니다.
 - **대상**: `HomeScreenViewModel`, `MyFeedsViewModel` 등
@@ -290,13 +296,12 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
 ## 문제 인식과 해결
 
+### 위치 문제
+1. 한국에서 일본에 출시할 앱으로, 위치 서비스를 활용해야했고, 시뮬레이터와 gpx를 활용. 현재 위치를 임의로 설정 후, 해당 위치 주변 좌표로 작성된 피드를 불러오는지 테스트 후 구현.
 
-**위치 문제**
-1. 한국에서 일본에 출시할 앱으로, 위치 서비스를 활용해야함 
-	1. 시뮬레이터와 gpx를 활용. 현재 위치를 임의로 설정 후, 해당 위치 주변 좌표로 작성된 피드를 불러오는지 테스트 후 구현.
+<br />
 
-  
-**상태 동기화 와 일관성 문제**
+### 상태 동기화 와 일관성 문제
 
 **문제**: 여러 뷰(지도 뷰, 피드 뷰) 간 상태 동기화와 일관성 유지. 예를 들어, 피드 뷰에서 선택한 게시물이 지도 뷰에 즉시 반영되어야 한다거나, 사용자 현재 위치 기준 2km 이내의 피드를 표시하는 마커가 MapView에 보임과 동시에, BottomSheetView에 피드 리스트로 제공되어야 합니다.
 
@@ -354,3 +359,6 @@ struct FeedListBottomSheet: View {
 ## 보완 및 개선점
 
 헥사고날 아키텍처 도입으로 인해 폴더 및 코드 구조의 복잡성이 증가할 수 있으며, 소규모 프로젝트의 경우 오히려 복잡성을 야기할 수 있다는 점을 유의해야 합니다. 또한, 헥사고날 아키텍처를 실제 앱에 완벽하게 1:1로 대응하기 어려운 경우가 많으므로, 프로젝트의 규모와 성격에 따라 유연하게 적용하는 것이 중요합니다.
+
+    </samp>
+</div>
