@@ -104,7 +104,7 @@
 
 ![overview](./Resources/README/overview.png)
 
-### 도메인 레이어
+### 도메인
 
 ```swift
 @MemberwiseInit(.public)
@@ -118,7 +118,6 @@ struct Feed: Equatable, Identifiable, Hashable {
 
 - **역할**: 외부 프레임워크에 의존하지 않는 순수 비즈니스 엔티티와 로직을 포함. 
 - **특징**: 어떤 외부 계층에도 의존하지 않습니다.
-### 애플리케이션 레이어
 
 ### 서비스 
 
@@ -167,8 +166,6 @@ protocol FeedRepository {
 - **역할**: 내부의 비즈니스 로직이 외부 시스템(DB, API 등)의 기능을 필요로 할 때 사용하는 의존성 명세입니다. "데이터를 저장해줘", "현재 위치를 알려줘"와 같은 요구사항을 인터페이스로 정의합니다.
 - **특징**: 서비스 계층은 이 포트(프로토콜)에만 의존합니다. 실제 구현이 Firebase인지, CoreLocation인지, 아니면 테스트용 Mock 객체인지는 전혀 알지 못합니다. 이를 통해 의존성 역전이 일어나 핵심 로직을 외부 기술로부터 보호합니다.
 
-### 어댑터
-포트를 구현하는 구현체입니다. 외부 레이어와 포트 사이에서 데이터를 변환하고 통신하는 역할을 담당합니다.
 
 ### 인바운드 어댑터
 
@@ -265,20 +262,20 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
 1. Adapter Layer
 - **역할**: 외부 시스템(CoreLocation(Swift 내부 기능이지만, 아키텍처 특성상 외부 시스템으로 식별), Firebase 등)에서 발생하는 구체적인(low-level) 오류를 감지하고, 이를 애플리케이션의 비즈니스 로직이 이해할 수 있는 일반적인 오류 형태로 **변환하고 전파합니다.
-* **대상**: `CoreLocationAdapter`, `FirebaseFeedFetchAdapter`
+- **대상**: `CoreLocationAdapter`, `FirebaseFeedFetchAdapter`
 - **예시**: `CoreLocationAdapter`에서 위치 정보 사용 권한이 거부되면, `CLLocationManager`의 상태를 확인하여 `LocationError.authorizationDenied`라는 도메인 오류를 발생시킵니다.
 - **이유**: 이렇게 함으로써 애플리케이션의 핵심 로직이 CoreLocation, Firebase 같은 특정 기술에 종속되지 않게 됩니다. 나중에 위치 제공자나, 데이터베이스를 다른 것으로 교체하더라도 Service 계층의 코드는 변경할 필요가 없어집니다.
 
 2. Service / Use Case Layer (Application Layer)
-	이 계층은 **비즈니스 관점의 오류를 처리하고 복구 전략을 결정**하는 가장 중요한 지점입니다.
-	- **역할**: Adapter로부터 전달받은 도메인 오류를 바탕으로 비즈니스 규칙에 따라 다음에 어떤 행동을 할지 **결정합니다.
-	- **대상**: `FetchNearbyFeedsService`, `FetchMyFeedsService` 등
-	- **예시**:
-	    - `FetchNearbyFeedsService`가 `LocationProvider`로부터 `LocationError.authorizationDenied` 오류를 받았습니다.
-	    - 이때 서비스는 "위치 정보 없이는 주변 피드를 가져올 수 없으니, 작업을 중단하고 '위치 관련 오류'가 발생했음을 상위 계층에 알려야 한다고 결정합니다."
-	    - 이를 위해 `LocationError`를 `FetchFeedsError.locationError`로 감싸서 반환합니다.
-	    - 필요하다면 재시도 로직을 구현할 수도 있는 최적의 위치입니다.
-	- **이유**: 여러 Adapter와 상호작용하며 전체 비즈니스 흐름을 관장하는 곳은 Service 계층뿐입니다. 따라서 어떤 오류가 발생했을 때 전체 작업의 성공/실패를 판단하고 그에 따른 흐름을 제어할 책임이 있습니다.
+이 계층은 **비즈니스 관점의 오류를 처리하고 복구 전략을 결정**하는 가장 중요한 지점입니다.
+- **역할**: Adapter로부터 전달받은 도메인 오류를 바탕으로 비즈니스 규칙에 따라 다음에 어떤 행동을 할지 **결정합니다.
+- **대상**: `FetchNearbyFeedsService`, `FetchMyFeedsService` 등
+- **예시**:
+    - `FetchNearbyFeedsService`가 `LocationProvider`로부터 `LocationError.authorizationDenied` 오류를 받았습니다.
+    - 이때 서비스는 "위치 정보 없이는 주변 피드를 가져올 수 없으니, 작업을 중단하고 '위치 관련 오류'가 발생했음을 상위 계층에 알려야 한다고 결정합니다."
+    - 이를 위해 `LocationError`를 `FetchFeedsError.locationError`로 감싸서 반환합니다.
+    - 필요하다면 재시도 로직을 구현할 수도 있는 최적의 위치입니다.
+- **이유**: 여러 Adapter와 상호작용하며 전체 비즈니스 흐름을 관장하는 곳은 Service 계층뿐입니다. 따라서 어떤 오류가 발생했을 때 전체 작업의 성공/실패를 판단하고 그에 따른 흐름을 제어할 책임이 있습니다.
 
 3. UI Layer (ViewModel)
 이 계층은 처리된 오류를 **사용자에게 어떻게 보여줄지 결정**하는 최종 단계입니다.
@@ -296,8 +293,6 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
 ### 위치 문제
 1. 한국에서 일본에 출시할 앱으로, 위치 서비스를 활용해야했고, 시뮬레이터와 gpx를 활용. 현재 위치를 임의로 설정 후, 해당 위치 주변 좌표로 작성된 피드를 불러오는지 테스트 후 구현.
-
-<br />
 
 ### 상태 동기화 와 일관성 문제
 
