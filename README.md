@@ -3,7 +3,8 @@
         <h1>coco</h1>
     </div>
 
-
+![COCO](./Resources/README/COCO-D2.png)
+<!-- 
 > 이 코드는 실제로 운영 중인 iOS 앱의 내부 설계, 아키텍처, 주요 유스케이스 및 테스트 전략을 설명하기 위해 일부 공개된 것입니다. 실제 앱의 전체 소스 코드나 세부 로직은 포함되어 있지 않으며, 일부 코드는 예시 및 구조적 이해를 돕기 위한 샘플일 뿐, 실제 구현과는 차이가 있을 수 있습니다.
 
 <br />
@@ -100,7 +101,7 @@
 ![architecture](./Resources/README/hexagon.png)
 
 ### 헥사고날 아키텍처(포트 앤 아댑터)
-헥사고날 아키텍처(Por정 and Adapters)를 채택하여 비즈니스 로직과 외부 서비스를 분리했습니다. 이를 통해 특정 기술(예: Firebase, MapKit 등)에 대한 의존성을 최소화하고, 유지보수 및 확장성을 높였습니다. 주요 구성 요소는 다음과 같습니다:
+헥사고날 아키텍처를 채택하여 비즈니스 로직과 외부 서비스를 분리했습니다. 이를 통해 특정 기술(예: Firebase, MapKit 등)에 대한 의존성을 최소화하고, 유지보수 및 확장성을 높였습니다. 주요 구성 요소는 다음과 같습니다:
 
 ![overview](./Resources/README/overview.png)
 
@@ -122,7 +123,6 @@ struct Feed: Equatable, Identifiable, Hashable {
 ### 서비스 
 
 ```swift
-// MARK: 서비스레이어 구현 (어플리케이션)
 class FetchNearbyFeedsService: FetchNearbyFeedsUseCase {
     @Injected(\.locationProvider) private var locationProvider: LocationProvider
     @Injected(\.feedRepository) private var feedRepository: FeedRepository
@@ -172,6 +172,7 @@ protocol FeedRepository {
 ```swift
 @Observable
 class HomeScreenViewModel {
+     private(set) var feeds: [Feed] = []
     private(set) var radiusInMeters: Double = 2000
     @Injected(\.fetchNearbyFeedsUseCase) private var fetchNearbyFeedsUseCase: FetchNearbyFeedsUseCase
 
@@ -241,7 +242,7 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
 ### 시나리오 별 테스트
 
-- **목표**: 비즈니스 규칙을 검증합니다. (외부 시스템(실제 위치, Firebase) 없이도 서비스의 비즈니스 로직(위치 결정, 경계 계산, 데이터 호출, 중복 제거, 거리 필터링, 정렬)이 올바르게 동작하는지 완벽하게 격리하여 테스트할 수 있습니다.)
+- **목표**: 비즈니스 규칙을 검증합니다. 외부 시스템(실제 위치, Firebase) 없이도 서비스의 비즈니스 로직(위치 결정, 데이터 호출, 거리 필터링 등)이 올바르게 동작하는지 완벽하게 격리하여 테스트할 수 있습니다.
 - **대상**: 피드는 사용자의 현재 위치 기준 최대 2km이내 피드가 제공됩니다.
 - **방법**: 서비스가 의존하는 포트(`FeedRepository`, `LocationProvider`)를 Mock 객체로 대체하여 테스트합니다. 이를 통해 Firebase나 CoreLocation의 실제 동작과 무관하게 서비스의 로직만 순수하게 테스트할 수 있습니다.
 
@@ -249,33 +250,37 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 
 ## 에러처리
 
-에러처리는 각 계층(Layer)의 역할에 맞게 분리해서 처리합니다. 에러처리를 위한 코드는 Port에서 관리합니다.
+에러처리는 각 계층의 역할에 맞게 분리해서 처리합니다. 에러처리를 위한 코드는 포트에서 관리합니다.
 
-"주변 피드 목록 요청" 흐름을 예시로 오류 처리 과정을 단계별로 살펴보겠습니다.
+"주변 피드 목록 요청"을 예시로 오류 처리 과정을 단계별로 살펴보겠습니다.
 
-1. **발생 및 변환 (Adapter)**: `CoreLocationAdapter`에서 위치 정보 권한이 거부되면 `LocationError.authorizationDenied` 오류가 발생합니다. 이 오류는 상위 계층으로 전파됩니다.
-2. **결정 및 조율 (Service)**: `FetchNearbyFeedsService`는 `LocationError`를 받고, "위치 정보 없이는 주변 피드를 가져올 수 없다" 고 판단하여 전체 유스케이스를 실패 처리하고, 이 오류를 `FetchFeedsError.locationError`로 변환하여 상위로 반환합니다.
-3. **표현 (ViewModel)**: `HomeScreenViewModel`은 `FetchFeedsError.locationError`를 받고, `errorMessage` 상태를 "위치 정보를 가져오는데 실패했습니다." 로 업데이트 하여 사용자에게 적절한 메시지를 보여줍니다.
+1. Adapter: `CoreLocationAdapter`에서 위치 정보 권한이 거부되면 `LocationError.authorizationDenied` 오류가 발생합니다. 이 오류는 상위 계층으로 전파됩니다.
+2. Service: `FetchNearbyFeedsService`는 `LocationError`를 받고, "위치 정보 없이는 주변 피드를 가져올 수 없다" 고 판단하여 전체 유스케이스를 실패 처리하고, 이 오류를 `FetchFeedsError.locationError`로 변환하여 상위로 반환합니다.
+3. ViewModel: `HomeScreenViewModel`은 `FetchFeedsError.locationError`를 받고, `errorMessage` 상태를 "위치 정보를 가져오는데 실패했습니다." 로 업데이트 하여 사용자에게 적절한 메시지를 보여줍니다.
 
 이처럼 각 계층이 자신의 역할에 맞는 오류 처리 책임을 수행할 때, 유지 보수가 용이하고 확장 가능한 애플리케이션을 만들 수 있습니다.
 
 
 1. Adapter Layer
-- **역할**: 외부 시스템(CoreLocation(Swift 내부 기능이지만, 아키텍처 특성상 외부 시스템으로 식별), Firebase 등)에서 발생하는 구체적인(low-level) 오류를 감지하고, 이를 애플리케이션의 비즈니스 로직이 이해할 수 있는 일반적인 오류 형태로 **변환하고 전파합니다.
+- **역할**: 외부 시스템(CoreLocation(Swift 내부 기능이지만, 아키텍처 특성상 외부 시스템으로 식별), Firebase 등)에서 발생하는 구체적인(low-level) 오류를 감지하고, 이를 애플리케이션의 비즈니스 로직이 이해할 수 있는 일반적인 오류 형태로 변환하고 전파합니다.
 - **대상**: `CoreLocationAdapter`, `FirebaseFeedFetchAdapter`
-- **예시**: `CoreLocationAdapter`에서 위치 정보 사용 권한이 거부되면, `CLLocationManager`의 상태를 확인하여 `LocationError.authorizationDenied`라는 도메인 오류를 발생시킵니다.
+- **예시**: `CoreLocationAdapter`에서 위치 정보 사용 권한이 거부되면, `CLLocationManager`의 상태를 확인하여 `LocationError.authorizationDenied`라는 오류를 발생시킵니다.
 - **이유**: 이렇게 함으로써 애플리케이션의 핵심 로직이 CoreLocation, Firebase 같은 특정 기술에 종속되지 않게 됩니다. 나중에 위치 제공자나, 데이터베이스를 다른 것으로 교체하더라도 Service 계층의 코드는 변경할 필요가 없어집니다.
 
+<br />
+
 2. Service / Use Case Layer (Application Layer)
-이 계층은 **비즈니스 관점의 오류를 처리하고 복구 전략을 결정**하는 가장 중요한 지점입니다.
-- **역할**: Adapter로부터 전달받은 도메인 오류를 바탕으로 비즈니스 규칙에 따라 다음에 어떤 행동을 할지 **결정합니다.
+이 계층은 **비즈니스 관점의 오류를 처리하는** 지점입니다.
+- **역할**: Adapter로부터 전달받은 오류를 바탕으로 비즈니스 규칙에 따라 다음에 어떤 행동을 할지 결정합니다.
 - **대상**: `FetchNearbyFeedsService`, `FetchMyFeedsService` 등
 - **예시**:
     - `FetchNearbyFeedsService`가 `LocationProvider`로부터 `LocationError.authorizationDenied` 오류를 받았습니다.
     - 이때 서비스는 "위치 정보 없이는 주변 피드를 가져올 수 없으니, 작업을 중단하고 '위치 관련 오류'가 발생했음을 상위 계층에 알려야 한다고 결정합니다."
     - 이를 위해 `LocationError`를 `FetchFeedsError.locationError`로 감싸서 반환합니다.
-    - 필요하다면 재시도 로직을 구현할 수도 있는 최적의 위치입니다.
+    - 필요하다면 재시도 로직을 구현할 수도 있습니다.
 - **이유**: 여러 Adapter와 상호작용하며 전체 비즈니스 흐름을 관장하는 곳은 Service 계층뿐입니다. 따라서 어떤 오류가 발생했을 때 전체 작업의 성공/실패를 판단하고 그에 따른 흐름을 제어할 책임이 있습니다.
+
+<br />
 
 3. UI Layer (ViewModel)
 이 계층은 처리된 오류를 **사용자에게 어떻게 보여줄지 결정**하는 최종 단계입니다.
@@ -292,7 +297,7 @@ class FirebaseFeedFetchAdapter: FeedRepository {
 ## 문제 인식과 해결
 
 ### 위치 문제
-1. 한국에서 일본에 출시할 앱으로, 위치 서비스를 활용해야했고, 시뮬레이터와 gpx를 활용. 현재 위치를 임의로 설정 후, 해당 위치 주변 좌표로 작성된 피드를 불러오는지 테스트 후 구현.
+한국에서 일본에 출시할 앱으로, 위치 서비스를 활용해야했고, 시뮬레이터와 gpx를 활용. 현재 위치를 임의로 설정 후, 해당 위치 주변 좌표로 작성된 피드를 불러오는지 확인 후 구현.
 
 ### 상태 동기화 와 일관성 문제
 
@@ -352,5 +357,6 @@ struct FeedListBottomSheet: View {
 ## 보완 및 개선점
 
 헥사고날 아키텍처 도입으로 인해 폴더 및 코드 구조의 복잡성이 증가할 수 있으며, 소규모 프로젝트의 경우 오히려 복잡성을 야기할 수 있다는 점을 유의해야 합니다. 또한, 헥사고날 아키텍처를 실제 앱에 완벽하게 1:1로 대응하기 어려운 경우가 많으므로, 프로젝트의 규모와 성격에 따라 유연하게 적용하는 것이 중요합니다.
+-->
 
-</div>
+</div> 
