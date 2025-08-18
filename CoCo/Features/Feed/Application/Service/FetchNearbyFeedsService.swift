@@ -13,8 +13,13 @@ import MemberwiseInit
 // MARK: - 3. 서비스레이어 구현 (어플리케이션)
 
 class FetchNearbyFeedsService: FetchNearbyFeedsUseCase {
-    @Injected(\.locationProvider) private var locationProvider: LocationProvider
-    @Injected(\.feedRepository) private var feedRepository: FeedRepository
+    private let locationProvider: LocationProvider
+    private let feedRepository: FeedRepository
+
+    init(locationProvider: LocationProvider, feedRepository: FeedRepository) {
+        self.locationProvider = locationProvider
+        self.feedRepository = feedRepository
+    }
 
     // MARK: - 서비스레이어의 역할
 
@@ -26,7 +31,7 @@ class FetchNearbyFeedsService: FetchNearbyFeedsUseCase {
             // 2. 가져온 위치를 기반으로 Repository에 피드 요청
             let feeds = try await feedRepository.fetchFeeds(near: currentLocation, within: radiusInMeters)
 
-            // 가져온 피드를 거리순으로 정렬하거나, 특정 조건으로 필터링
+            // TODO: - 가져온 피드를 거리순으로 정렬하거나, 특정 조건으로 필터링
 
             return feeds
         } catch let error as LocationError {

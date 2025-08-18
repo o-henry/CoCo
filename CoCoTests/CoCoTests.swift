@@ -8,7 +8,6 @@
 
 @testable import CoCo
 import CoreLocation
-import Factory
 import Testing
 
 @Suite("주변 피드 검색 기능 테스트")
@@ -17,16 +16,11 @@ struct FetchNearbyFeedsUsingFactoryTests {
     func execute_whenFeedsExist_shouldReturnOnlyFeedsWithinRadius() async throws {
         // MARK: GIVEN (준비)
 
-        // 1. 테스트 격리를 위해 Factory 컨테이너 초기화
-        Container.shared.reset()
-
-        // 2. Mock 객체 생성 및 Factory 컨테이너에 등록
+        // 1. Mock 객체 생성
         let mockLocationProvider = MockLocationProvider()
         let mockFeedRepository = MockFeedRepository()
-        Container.shared.locationProvider.register { mockLocationProvider }
-        Container.shared.feedRepository.register { mockFeedRepository }
 
-        // 3. 테스트 데이터 설정
+        // 2. 테스트 데이터 설정
         let myLocation = CLLocation(latitude: 37.5665, longitude: 126.9780) // 서울 시청
         let searchRadius: Double = 2000
 
@@ -38,8 +32,11 @@ struct FetchNearbyFeedsUsingFactoryTests {
 
         mockFeedRepository.allCandidateFeeds = [feedInside, feedAlsoInside, feedOutside]
 
-        // 4. 테스트 대상(SUT) 생성
-        let sut: FetchNearbyFeedsUseCase = Container.shared.fetchNearbyFeedsUseCase()
+        // 3. 테스트 대상(SUT) 생성 (생성자 주입)
+        let sut: FetchNearbyFeedsUseCase = FetchNearbyFeedsService(
+            locationProvider: mockLocationProvider,
+            feedRepository: mockFeedRepository
+        )
 
         // MARK: WHEN (실행)
 
@@ -59,15 +56,15 @@ struct FetchNearbyFeedsUsingFactoryTests {
     func execute_whenLocationFails_shouldThrowLocationError() async {
         // MARK: GIVEN
 
-        Container.shared.reset()
-
         let mockLocationProvider = MockLocationProvider()
         mockLocationProvider.mockError = LocationError.authorizationDenied
 
-        Container.shared.locationProvider.register { mockLocationProvider }
-        Container.shared.feedRepository.register { MockFeedRepository() }
+        let mockFeedRepository = MockFeedRepository()
 
-        let sut: FetchNearbyFeedsUseCase = Container.shared.fetchNearbyFeedsUseCase()
+        let sut: FetchNearbyFeedsUseCase = FetchNearbyFeedsService(
+            locationProvider: mockLocationProvider,
+            feedRepository: mockFeedRepository
+        )
 
         // MARK: WHEN & THEN
 

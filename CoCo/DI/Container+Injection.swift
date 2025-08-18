@@ -25,7 +25,7 @@ extension Container {
     // MARK: - Use Cases (Application Layer)
 
     var fetchNearbyFeedsUseCase: Factory<FetchNearbyFeedsUseCase> {
-        self { FetchNearbyFeedsService() }
+        self { FetchNearbyFeedsService(locationProvider: self.locationProvider(), feedRepository: self.feedRepository()) }
     }
 
     var fetchMyFeedsUseCase: Factory<FetchMyFeedsUseCase> {
