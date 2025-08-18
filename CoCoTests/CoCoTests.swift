@@ -11,7 +11,7 @@ import CoreLocation
 import Testing
 
 @Suite("주변 피드 검색 기능 테스트")
-struct FetchNearbyFeedsUsingFactoryTests {
+struct FetchNearbyFeedsTests {
     @Test("주어진 반경 내의 피드만 올바르게 반환하는지 테스트")
     func execute_whenFeedsExist_shouldReturnOnlyFeedsWithinRadius() async throws {
         // MARK: GIVEN (준비)
@@ -22,7 +22,7 @@ struct FetchNearbyFeedsUsingFactoryTests {
 
         // 2. 테스트 데이터 설정
         let myLocation = CLLocation(latitude: 37.5665, longitude: 126.9780) // 서울 시청
-        let searchRadius: Double = 2000
+        let searchRadius: Double = 2000 // 2km
 
         mockLocationProvider.mockLocation = myLocation
 
